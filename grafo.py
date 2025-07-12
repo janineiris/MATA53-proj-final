@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import greedy
+import dsatur
 
 
 class Vertice:
@@ -39,5 +40,4 @@ class Grafo:
         greedy.coloring(self)
 
     def dsatur_coloring(self):
-        print("[DSatur] Coloração iniciada...")
-        return
+        dsatur.coloring(self)
