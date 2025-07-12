@@ -1,5 +1,7 @@
 from collections import defaultdict
 
+import greedy
+
 
 class Vertice:
     def __init__(self, nome: int):
@@ -34,34 +36,7 @@ class Grafo:
             v.cor = None
 
     def greedy_coloring(self):
-        print("[Greedy] Coloração iniciada...")
-
-        cores = [-1 for i in range(self.n)]
-        disponibilidadeCor = [-1 for i in range(self.n)]
-
-        cores[0] = 0
-        for i in range(1, self.n):
-
-            for v in self.vertices[i].vizinhanca: 
-                if (cores[v] != -1):
-                    disponibilidadeCor[cores[v]] = 1
-            
-            cor = 0
-
-            while cor < self.n:
-                if (disponibilidadeCor[cor] == -1):
-                    break
-                cor += 1
-
-            cores[i] = cor
-
-            for v in self.vertices[i].vizinhanca:
-                if (cores[v] != -1):
-                    disponibilidadeCor[cores[v]] = -1
-
-        # todo: print de cores
-
-        return
+        greedy.coloring(self)
 
     def dsatur_coloring(self):
         print("[DSatur] Coloração iniciada...")
