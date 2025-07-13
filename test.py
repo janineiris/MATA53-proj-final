@@ -1,5 +1,7 @@
+import argparse
 import random
 from time import time
+
 from grafo import Grafo
 from utils import visualizar_grafo_com_cores, visualizar_grafo_pequeno
 
@@ -16,63 +18,85 @@ def gerar_grafo_gigante(n_vertices: int, n_arestas: int) -> Grafo:
             continue
 
         aresta = tuple(sorted((u, v)))
+
         if aresta in arestas_adicionadas:
             continue
 
-        # print(f"{u}-{v}", end=", ")
         grafo.add_aresta(u, v)
         arestas_adicionadas.add(aresta)
 
-    print()
     return grafo
 
 
-if __name__ == "__main__":
-    n_vertices = 20000
-    n_arestas = 50000
+def main():
+    parser = argparse.ArgumentParser(description="Geração de grafos gigantes.")
+    parser.add_argument("--vertices", type=int, help="Número de vértices")
+    parser.add_argument("--arestas", type=int, help="Número de arestas")
+    args = parser.parse_args()
 
+    run_test(args.vertices, args.arestas)
+
+
+def run_test(n_vertices, n_arestas):
     print(f"Gerando grafo com {n_vertices} vértices e {n_arestas} arestas...")
+
     inicio = time()
     grafo = gerar_grafo_gigante(n_vertices, n_arestas)
     fim = time()
+
     print(f"Grafo gerado em {fim - inicio:.5f} segundos.")
+
     if n_vertices <= 1000:
         visualizar_grafo_pequeno(grafo)
 
     print()
 
-    print(f"Fazendo coloração por método Greedy Coloring.")
+    print("Fazendo coloração por método Greedy Coloring.")
+
     inicio = time()
     grafo.greedy_coloring()
     fim = time()
 
     cores_utilizadas = set()
+
     for vertice in grafo.vertices.values():
         assert vertice.cor is not None
-        assert not any(vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca)
+        assert not any(
+            vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca
+        )
         cores_utilizadas.add(vertice.cor)
 
     print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
+
     if n_vertices <= 1000:
         visualizar_grafo_com_cores(grafo)
 
     print()
 
-    print(f"Fazendo coloração por método DSatur Coloring.")
+    print("Fazendo coloração por método DSatur Coloring.")
+
     inicio = time()
     grafo.dsatur_coloring()
     fim = time()
 
     cores_utilizadas = set()
+
     for vertice in grafo.vertices.values():
         assert vertice.cor is not None
-        assert not any(vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca)
+        assert not any(
+            vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca
+        )
         cores_utilizadas.add(vertice.cor)
 
     print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
+
     if n_vertices <= 1000:
         visualizar_grafo_com_cores(grafo)
 
     print()
+
+
+if __name__ == "__main__":
+    main()
