@@ -3,7 +3,7 @@ def coloring(grafo):
     print("[Greedy] Coloração iniciada...")
     grafo.resetar_cores()
 
-    disponibilidadeCor = [-1 for i in range(1, grafo.n + 1)]
+    disponibilidadeCor = [-1 for i in range(1, grafo.n + 2)]
     verticesOrdGraus = sorted(range(1, grafo.n + 1), key = lambda v: -len(grafo.vertices[v].vizinhanca))
 
     grafo.vertices[1].cor = 1
