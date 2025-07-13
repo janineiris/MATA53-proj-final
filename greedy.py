@@ -4,9 +4,12 @@ def coloring(grafo):
     grafo.resetar_cores()
 
     disponibilidadeCor = [-1 for i in range(1, grafo.n + 1)]
+    verticesOrdGraus = sorted(range(1, grafo.n + 1), key = lambda v: -len(grafo.vertices[v].vizinhanca))
 
     grafo.vertices[1].cor = 1
-    for i in range(2, grafo.n + 1):
+    for i in verticesOrdGraus:
+        if (i == 1):
+            continue
 
         for v in grafo.vertices[i].vizinhanca:
             if (grafo.vertices[v].cor is not None):
