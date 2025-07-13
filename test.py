@@ -28,16 +28,20 @@ def gerar_grafo_gigante(n_vertices: int, n_arestas: int) -> Grafo:
     return grafo
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Geração de grafos gigantes.")
-    parser.add_argument("--vertices", type=int, help="Número de vértices")
-    parser.add_argument("--arestas", type=int, help="Número de arestas")
-    args = parser.parse_args()
-
-    run_test(args.vertices, args.arestas)
+def conta_cores(grafo):
+    cores_utilizadas = set()
+    for vertice in grafo.vertices.values():
+        assert vertice.cor is not None
+        assert not any(vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca)
+        cores_utilizadas.add(vertice.cor)
+    return cores_utilizadas
 
 
 def run_test(n_vertices, n_arestas):
+    if n_arestas > n_vertices * (n_vertices - 1) / 2:
+        n_arestas = int(n_vertices * (n_vertices - 1) / 2)
+        print(
+            f"A quantidade máxima de arestas para um grafo de {n_vertices} vértices é {n_arestas} arestas, iremos gerar um grafo com {n_arestas} arestas.")
     print(f"Gerando grafo com {n_vertices} vértices e {n_arestas} arestas...")
 
     inicio = time()
@@ -57,14 +61,7 @@ def run_test(n_vertices, n_arestas):
     grafo.greedy_coloring()
     fim = time()
 
-    cores_utilizadas = set()
-
-    for vertice in grafo.vertices.values():
-        assert vertice.cor is not None
-        assert not any(
-            vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca
-        )
-        cores_utilizadas.add(vertice.cor)
+    cores_utilizadas = conta_cores(grafo)
 
     print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
@@ -80,14 +77,7 @@ def run_test(n_vertices, n_arestas):
     grafo.dsatur_coloring()
     fim = time()
 
-    cores_utilizadas = set()
-
-    for vertice in grafo.vertices.values():
-        assert vertice.cor is not None
-        assert not any(
-            vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca
-        )
-        cores_utilizadas.add(vertice.cor)
+    cores_utilizadas = conta_cores(grafo)
 
     print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
@@ -96,6 +86,15 @@ def run_test(n_vertices, n_arestas):
         visualizar_grafo_com_cores(grafo)
 
     print()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Geração de grafos gigantes.")
+    parser.add_argument("--vertices", type=int, help="Número de vértices")
+    parser.add_argument("--arestas", type=int, help="Número de arestas")
+    args = parser.parse_args()
+
+    run_test(args.vertices, args.arestas)
 
 
 if __name__ == "__main__":
