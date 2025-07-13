@@ -1,4 +1,6 @@
+import time
 from grafo import Grafo
+from utils import visualizar_grafo_com_cores
 
 
 def menu():
@@ -33,16 +35,24 @@ def menu():
                 print("Crie um grafo primeiro.")
                 continue
             grafo.mostrar_grafo()
+            if grafo.n <= 1000:
+                visualizar_grafo_com_cores(grafo)
         elif opcao == '4':
             if grafo is None:
                 print("Crie um grafo primeiro.")
                 continue
+            inicio = time()
             grafo.greedy_coloring()
+            fim = time()
+            print(f"Tempo utilizado: {fim-inicio} segundos")
         elif opcao == '5':
             if grafo is None:
                 print("Crie um grafo primeiro.")
                 continue
+            inicio = time()
             grafo.dsatur_coloring()
+            fim = time()
+            print(f"Tempo utilizado: {fim-inicio} segundos")
         elif opcao == '0':
             print("Saindo...")
             break
