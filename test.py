@@ -6,7 +6,7 @@ from grafo import Grafo
 from utils import visualizar_grafo_com_cores, visualizar_grafo_pequeno
 
 
-def gerar_grafo_gigante(n_vertices: int, n_arestas: int) -> Grafo:
+def gerar_grafo_aleatorio(n_vertices: int, n_arestas: int) -> Grafo:
     grafo = Grafo(n_vertices)
     arestas_adicionadas = set()
 
@@ -28,33 +28,82 @@ def gerar_grafo_gigante(n_vertices: int, n_arestas: int) -> Grafo:
     return grafo
 
 
+def gerar_k_grafo(n_vertices: int) -> Grafo:
+    grafo = Grafo(n_vertices)
+
+    for u in range(1, n_vertices):
+        for v in range(u + 1, n_vertices + 1):
+            grafo.add_aresta(u, v)
+
+    return grafo
+
+
+def gerar_grafo_arquivo(arquivo: str) -> Grafo:
+    with open(arquivo, "r") as file:
+        lines = file.readlines()
+        n_vertices = int(lines[0])
+        grafo = Grafo(n_vertices)
+
+        for line in lines[1:]:
+            u, v = [int(i) for i in line.split(" ")]
+            grafo.add_aresta(u, v)
+
+    return grafo
+
+
 def conta_cores(grafo):
     cores_utilizadas = set()
+
     for vertice in grafo.vertices.values():
         assert vertice.cor is not None
-        assert not any(vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca)
+        assert not any(
+            vertice.cor == grafo.vertices[vizinho].cor for vizinho in vertice.vizinhanca
+        )
         cores_utilizadas.add(vertice.cor)
+
     return cores_utilizadas
 
 
-def run_test(n_vertices, n_arestas):
-    if n_arestas > n_vertices * (n_vertices - 1) / 2:
-        n_arestas = int(n_vertices * (n_vertices - 1) / 2)
-        print(
-            f"A quantidade máxima de arestas para um grafo de {n_vertices} vértices é {n_arestas} arestas, iremos gerar um grafo com {n_arestas} arestas.")
-    print(f"Gerando grafo com {n_vertices} vértices e {n_arestas} arestas...")
-
+def cria_grafo(
+    n_vertices: int, n_arestas: int, mostrar_grafo: bool, arquivo: str
+) -> Grafo:
     inicio = time()
-    grafo = gerar_grafo_gigante(n_vertices, n_arestas)
+
+    if arquivo:
+        print(f"Gerando grafo a partir de arquivo {arquivo}...")
+        grafo = gerar_grafo_arquivo(arquivo)
+    else:
+        maximo_arestas = int(n_vertices * (n_vertices - 1) / 2)
+
+        if n_arestas > maximo_arestas:
+            print(
+                f"A quantidade máxima de arestas para um grafo de {n_vertices} vértices é {maximo_arestas} arestas, iremos gerar um grafo com {maximo_arestas} arestas."
+            )
+
+        n_arestas = min(n_arestas, maximo_arestas)
+
+        if n_arestas == maximo_arestas:
+            print(f"Gerando k-grafo com {n_vertices} vértices e {n_arestas} arestas...")
+
+            grafo = gerar_k_grafo(n_vertices)
+        else:
+            print(
+                f"Gerando grafo com {n_vertices} vértices e {n_arestas} arestas aleatórias..."
+            )
+
+            grafo = gerar_grafo_aleatorio(n_vertices, n_arestas)
     fim = time()
 
-    print(f"Grafo gerado em {fim - inicio:.5f} segundos.")
+    print(f"Grafo gerado em {fim - inicio:.10f} segundos.")
 
-    if n_vertices <= 1000:
+    if mostrar_grafo:
         visualizar_grafo_pequeno(grafo)
 
     print()
+    return grafo
 
+
+def run_test(grafo: Grafo, mostrar_grafo: bool):
     print("Fazendo coloração por método Greedy Coloring.")
 
     inicio = time()
@@ -62,11 +111,11 @@ def run_test(n_vertices, n_arestas):
     fim = time()
 
     cores_utilizadas = conta_cores(grafo)
-
-    print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
+    greedy = len(cores_utilizadas)
+    print(f"Tempo utilizado: {fim - inicio:.10f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
 
-    if n_vertices <= 1000:
+    if mostrar_grafo:
         visualizar_grafo_com_cores(grafo)
 
     print()
@@ -78,23 +127,27 @@ def run_test(n_vertices, n_arestas):
     fim = time()
 
     cores_utilizadas = conta_cores(grafo)
-
-    print(f"Tempo utilizado: {fim - inicio:.5f} segundos")
+    dsatur = len(cores_utilizadas)
+    print(f"Tempo utilizado: {fim - inicio:.10f} segundos")
     print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
 
-    if n_vertices <= 1000:
+    if mostrar_grafo:
         visualizar_grafo_com_cores(grafo)
 
     print()
+    return greedy, dsatur, grafo
 
 
 def main():
     parser = argparse.ArgumentParser(description="Geração de grafos gigantes.")
     parser.add_argument("--vertices", type=int, help="Número de vértices")
     parser.add_argument("--arestas", type=int, help="Número de arestas")
+    parser.add_argument("--mostrar", type=bool, default=False, help="Mostrar grafo")
+    parser.add_argument("--arquivo", type=str, default="", help="Arquivo com grafo")
     args = parser.parse_args()
 
-    run_test(args.vertices, args.arestas)
+    grafo = cria_grafo(args.vertices, args.arestas, args.mostrar, args.arquivo)
+    run_test(grafo, args.mostrar)
 
 
 if __name__ == "__main__":
