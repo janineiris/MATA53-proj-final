@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import greedy
 import dsatur
+import welshpowell
 
 
 class Vertice:
@@ -41,3 +42,6 @@ class Grafo:
 
     def dsatur_coloring(self):
         dsatur.coloring(self)
+
+    def welsh_powel_coloring(self):
+        welshpowell.coloring(self)

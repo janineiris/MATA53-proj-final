@@ -13,6 +13,7 @@ def menu():
         print("3. Mostrar grafo")
         print("4. Rodar coloração GREEDY")
         print("5. Rodar coloração DSATUR")
+        print("6. Rodar coloração WELSH-POWELL")
         print("0. Sair")
 
         opcao = input("Escolha uma opção: ")
@@ -46,6 +47,14 @@ def menu():
             fim = time()
             print(f"Tempo utilizado: {fim-inicio:.5f} segundos")
         elif opcao == '5':
+            if grafo is None:
+                print("Crie um grafo primeiro.")
+                continue
+            inicio = time()
+            grafo.dsatur_coloring()
+            fim = time()
+            print(f"Tempo utilizado: {fim-inicio:.5f} segundos")
+        elif opcao == '6':
             if grafo is None:
                 print("Crie um grafo primeiro.")
                 continue

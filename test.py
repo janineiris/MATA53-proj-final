@@ -135,6 +135,22 @@ def run_test(grafo: Grafo, mostrar_grafo: bool):
         visualizar_grafo_com_cores(grafo)
 
     print()
+
+    print("Fazendo coloração por método Welsh-Powell Coloring.")
+
+    inicio = time()
+    grafo.dsatur_coloring()
+    fim = time()
+
+    cores_utilizadas = conta_cores(grafo)
+    dsatur = len(cores_utilizadas)
+    print(f"Tempo utilizado: {fim - inicio:.10f} segundos")
+    print(f"Cores utilizadas: {len(cores_utilizadas)} -> {cores_utilizadas}")
+
+    if mostrar_grafo:
+        visualizar_grafo_com_cores(grafo)
+
+    print()
     return greedy, dsatur, grafo
 
 
