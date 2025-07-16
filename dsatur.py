@@ -3,7 +3,7 @@ import heapq
 
 def coloring(grafo):
     def menor_cor_possivel(grafo, vertice: int) -> int:
-        for vizinho in grafo.vertices[proximo].vizinhanca:
+        for vizinho in grafo.vertices[vertice].vizinhanca:
             cor_vizinho = grafo.vertices[vizinho].cor
             if cor_vizinho is not None:
                 cores_usadas[cor_vizinho] = True
@@ -14,7 +14,7 @@ def coloring(grafo):
                 break
             cor += 1
 
-        for vizinho in grafo.vertices[proximo].vizinhanca:
+        for vizinho in grafo.vertices[vertice].vizinhanca:
             cor_vizinho = grafo.vertices[vizinho].cor
             if cor_vizinho is not None:
                 cores_usadas[cor_vizinho] = False
@@ -27,7 +27,6 @@ def coloring(grafo):
     # Inicializa saturação de todos os vértices como 0
     saturacao = {v: 0 for v in grafo.vertices.keys()}
     grau = {index: len(vertice.vizinhanca) for index, vertice in grafo.vertices.items()}
-    cores_vizinhos = {v: set() for v in grafo.vertices.keys()}
 
     cores_usadas = [False for i in range(0, grafo.n + 1)]
 
@@ -53,7 +52,6 @@ def coloring(grafo):
             # Adiciona vizinhos na fila de prioridade
             if grafo.vertices[vizinho].cor is None:
                 heapq.heappush(fila_prioridade, ((-saturacao[vizinho], -grau[vizinho], vizinho), vizinho))
-                cores_vizinhos[vizinho].add(cor)
                 grau[vizinho] -= 1
 
     print("[DSATUR] Coloração finalizada.")
