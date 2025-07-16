@@ -51,7 +51,8 @@ def coloring(grafo):
         for vizinho in grafo.vertices[proximo].vizinhanca:
             # Adiciona vizinhos na fila de prioridade
             if grafo.vertices[vizinho].cor is None:
-                heapq.heappush(fila_prioridade, ((-saturacao[vizinho], -grau[vizinho], vizinho), vizinho))
                 grau[vizinho] -= 1
+                saturacao[vizinho] += 1
+                heapq.heappush(fila_prioridade, ((-saturacao[vizinho], -grau[vizinho], vizinho), vizinho))
 
     print("[DSATUR] Coloração finalizada.")
